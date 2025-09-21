@@ -1,0 +1,25 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    // File Layout
+    // "rootDir": "./src",
+    "outDir": "./dist",
+
+    // Environment Settings
+    // See also https://aka.ms/tsconfig/module
+    "module": "esnext", // 模块格式
+    "target": "es2016", // 目标语法
+    "types": [],
+    "moduleResolution": "node", // 模块解析方式
+    "resolveJsonModule": true, // 允许导入 JSON 模块
+    "esModuleInterop": true, // 允许通过es6模块语法导入commonjs模块
+    "lib": ["esnext","dom"], // 目标环境支持的库
+    "sourceMap": true,
+    "strict": false,
+    "jsx": "preserve", // 保留jsx语法, 交给babel或其他工具处理
+    "baseUrl": ".", // 基础路径
+    "paths": {
+      "@vue/*": ["packages/*/src"]
+    }
+  }
+}
