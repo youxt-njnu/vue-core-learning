@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>hello vue</h1>
+      <h2 id="info"></h2>
+    </div>
+  </body>
+  <script type="module">
+    /** 
+    // 原生的
+    import {
+      reactive,
+      effect,
+    } from '../node_modules/@vue/reactivity/dist/reactivity.esm-browser.js'
+
+    // reactive 把数据变成响应式
+    // effect 副作用，数据变化后effect会重新执行，例如watch, computed, 组件
+    
+    const state = reactive({
+      name: 'zhangsan',
+      age: 11,
+    })
+    const info = document.getElementById('info')
+    const template = (name, age) => `name: ${name}, age: ${age}`
+    // 第一次会渲染，后续数据变动，会再次渲染
+    effect(() => {
+      info.textContent = template(state.name, state.age)
+    })
+    let changeTime = 5
+    const timer = setInterval(() => {
+      if (changeTime) {
+        state.age++
+        changeTime--
+      } else {
+        changeTime = null
+        clearInterval(timer)
+      }
+    }, 1000)
+    */
+
+    import { effect, reactive } from '../packages/reactivity/dist/reactivity.js'
+    const state = reactive({
+      name: 'zhangsan',
+      age: 11,
+    })
+    console.log(state)
+  </script>
+</html>
