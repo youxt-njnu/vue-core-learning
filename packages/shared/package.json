@@ -4,6 +4,7 @@
   "description": "Vue 3 Shared Package",
   "module": "dist/shared.esm-bundler.js",
   "buildOptions": {
+    "name": "VueShared",
     "formats": [
       "esm-bundler",
       "cjs"
