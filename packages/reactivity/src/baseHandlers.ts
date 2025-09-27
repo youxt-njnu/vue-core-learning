@@ -1,3 +1,4 @@
+import { track, trigger } from "./reactiveEffect";
 
 export enum ReactiveFlags {
   IS_REACTIVE = '__v_isReactive',
@@ -10,17 +11,24 @@ export const handlerOptions:ProxyHandler<any> = {
     if (key === ReactiveFlags.IS_REACTIVE) {
       return true;
     }
+    // 需要把属性和effect关联起来
+    // 依赖收集 
+    // console.log(reactiveEffect,key);
+    track(target,key);
+
     // return target[key]; // 有问题，具体见test-1
     return Reflect.get(target, key, receiver);
-
-    // 需要把属性和effect关联起来
-    // 依赖收集 todo
   },
   set(target, key, value, receiver) {
     // target[key]=value; // 有问题，具体见test-1
 
     // 找到属性，让对应的effect都执行下
-    // 触发依赖更新 todo
-    return Reflect.set(target, key, value, receiver);
+    // 触发依赖更新
+    const oldValue = target[key];
+    const result = Reflect.set(target, key, value, receiver);
+    if(oldValue !== value) {
+      trigger(target,key,value,oldValue);
+    }
+    return result;
   }
 }

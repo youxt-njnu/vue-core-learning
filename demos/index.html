@@ -18,10 +18,12 @@
       reactive,
       effect,
     } from '../node_modules/@vue/reactivity/dist/reactivity.esm-browser.js'
+    */
 
+    import { effect, reactive } from '../packages/reactivity/dist/reactivity.js'
     // reactive 把数据变成响应式
     // effect 副作用，数据变化后effect会重新执行，例如watch, computed, 组件
-    
+
     const state = reactive({
       name: 'zhangsan',
       age: 11,
@@ -42,13 +44,5 @@
         clearInterval(timer)
       }
     }, 1000)
-    */
-
-    import { effect, reactive } from '../packages/reactivity/dist/reactivity.js'
-    const state = reactive({
-      name: 'zhangsan',
-      age: 11,
-    })
-    console.log(state.name, state.age)
   </script>
 </html>
