@@ -1,4 +1,5 @@
 import { isObject } from "@vue/shared";
+import { ReactiveFlags, handlerOptions } from "./baseHandlers";
 
 /** 
  * case1: reactiveMap
@@ -20,25 +21,6 @@ import { isObject } from "@vue/shared";
  */
 const reactiveMap = new WeakMap();
 
-enum ReactiveFlags {
-  IS_REACTIVE = '__v_isReactive',
-}
-
-const handlerOptions:ProxyHandler<any> = {
-  get(target, key, receiver) {
-    // 能进入get，劫持到对属性的访问，说明已经具备了get和set，说明已经代理过了
-    if (key === ReactiveFlags.IS_REACTIVE) {
-      return true;
-    }
-  },
-  set(target, key, value, receiver) {
-    return true;
-  }
-}
-export function reactive(target) {
-  return createReactiveObject(target);
-}
-
 export function createReactiveObject(target) {
   if (!isObject(target)) {
     return target;
@@ -53,4 +35,8 @@ export function createReactiveObject(target) {
   let proxy = new Proxy(target, handlerOptions);
   reactiveMap.set(target, proxy);
   return proxy;
+}
+
+export function reactive(target) {
+  return createReactiveObject(target);
 }
