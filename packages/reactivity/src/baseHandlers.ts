@@ -1,3 +1,5 @@
+import { isObject } from "@vue/shared";
+import { reactive } from './reactive';
 import { track, trigger } from "./reactiveEffect";
 
 export enum ReactiveFlags {
@@ -17,7 +19,15 @@ export const handlerOptions:ProxyHandler<any> = {
     track(target,key);
 
     // return target[key]; // 有问题，具体见test-1
-    return Reflect.get(target, key, receiver);
+    const result = Reflect.get(target, key, receiver);
+    /** 递归代理
+     * 当前值也是一个对象，则需要递归代理这个对象
+     * state.address = {country: aaa, number:bbb}
+     */
+    if(isObject(result)) {
+      return reactive(result);
+    }
+    return result;
   },
   set(target, key, value, receiver) {
     // target[key]=value; // 有问题，具体见test-1

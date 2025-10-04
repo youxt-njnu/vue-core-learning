@@ -27,22 +27,52 @@
     const state = reactive({
       name: 'zhangsan',
       age: 11,
+      address: {
+        country: '中国',
+        number: '123456',
+      },
     })
     const info = document.getElementById('info')
     const template = (name, age) => `name: ${name}, age: ${age}`
     // 第一次会渲染，后续数据变动，会再次渲染
+    // let runner = effect(
+    //   () => {
+    //     info.textContent = template(state.name, state.age)
+    //   },
+    //   {
+    //     scheduler: () => {
+    //       console.log(
+    //         '自定义的scheduler，同时下面继续调用runner，可以实现AOP编程'
+    //       )
+    //       runner()
+    //     },
+    //   }
+    // )
+
+    /** case6: 通过给effect加一个是否运行的属性，在triggerEffect中进行判断
+     * 下面的代码，会陷入死循环，需要进行处理，使得effect只执行1次（即使里面的age已经被改变了）
+     */
+    // effect(() => {
+    //   info.textContent = state.age;
+    //   state.age = Math.random()
+    // })
+
+    // let changeTime = 5
+    // const timer = setInterval(() => {
+    //   if (changeTime) {
+    //     state.age++
+    //     changeTime--
+    //   } else {
+    //     changeTime = null
+    //     clearInterval(timer)
+    //   }
+    // }, 1000)
+
     effect(() => {
-      info.textContent = template(state.name, state.age)
+      info.textContent = state.address.number
     })
-    let changeTime = 5
-    const timer = setInterval(() => {
-      if (changeTime) {
-        state.age++
-        changeTime--
-      } else {
-        changeTime = null
-        clearInterval(timer)
-      }
+    setTimeout(() => {
+      state.address.number = '654321'
     }, 1000)
   </script>
 </html>
