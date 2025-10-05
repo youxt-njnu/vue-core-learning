@@ -45,7 +45,7 @@ function postCleanEffect(effect) {
   effect.deps.length = effect._depsLength; // effect维度的更新
 }
 
-export let reactiveEffect; 
+export let activeEffect; 
 // 全局变量，指向当前正在执行的effect，并导出给baseHandler，
 // 使得当effect的fn执行的时候，baseHandler可以获取到当前正在执行的effect
 // 从而可以把当前正在执行的effect添加到属性的依赖列表中
@@ -64,9 +64,9 @@ class ReactiveEffect {
     if(!this.active) {
       return this.fn(); // 直接执行fn，不进行依赖收集
     }
-    let lastReactiveEffect = reactiveEffect;
+    let lastReactiveEffect = activeEffect;
     try {
-      reactiveEffect = this; // 把当前正在执行的effect赋值给全局变量reactiveEffect
+      activeEffect = this; // 把当前正在执行的effect赋值给全局变量reactiveEffect
       preCleanEffect(this); // 执行前，清除当前effect的依赖 case4
       /** 
        * case4
@@ -93,7 +93,7 @@ class ReactiveEffect {
        * 需要清除掉aa,bb关联的依赖
        */
       // reactiveEffect = undefined; // 执行完fn后，把全局变量reactiveEffect设为undefined
-      reactiveEffect = lastReactiveEffect; // 执行完fn后，把全局变量reactiveEffect设为上一个正在执行的effect，这种处理方式针对的下面的case
+      activeEffect = lastReactiveEffect; // 执行完fn后，把全局变量reactiveEffect设为上一个正在执行的effect，这种处理方式针对的下面的case
       /** 
        * case3: 
        * effect(() => { // e1

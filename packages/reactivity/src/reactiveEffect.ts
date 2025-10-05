@@ -1,4 +1,4 @@
-import { reactiveEffect, trackEffect, triggerEffects } from "./effect";
+import { activeEffect, trackEffect, triggerEffects } from "./effect";
 
 const targetMap = new WeakMap();
 
@@ -11,7 +11,7 @@ export const createDep = (cleanup,name) => {
 }
 
 export function track(target,key) {
-  if(!reactiveEffect) {
+  if(!activeEffect) {
     return;
   }
 
@@ -25,7 +25,7 @@ export function track(target,key) {
     dep = createDep(()=> depsMap.delete(key),key);
     depsMap.set(key, dep);
   }
-  trackEffect(reactiveEffect,dep); // 把当前的reactiveEffect，放入到deps的map的里面
+  trackEffect(activeEffect,dep); // 把当前的reactiveEffect，放入到deps的map的里面
   // console.log(targetMap);
 }
 

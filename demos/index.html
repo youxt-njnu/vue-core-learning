@@ -20,7 +20,14 @@
     } from '../node_modules/@vue/reactivity/dist/reactivity.esm-browser.js'
     */
 
-    import { effect, reactive } from '../packages/reactivity/dist/reactivity.js'
+    import {
+      effect,
+      reactive,
+      ref,
+      toRef,
+      toRefs,
+      proxyRefs,
+    } from '../packages/reactivity/dist/reactivity.js'
     // reactive 把数据变成响应式
     // effect 副作用，数据变化后effect会重新执行，例如watch, computed, 组件
 
@@ -68,11 +75,48 @@
     //   }
     // }, 1000)
 
+    // 深度代理
+    // effect(() => {
+    //   info.textContent = state.address.number
+    // })
+    // setTimeout(() => {
+    //   state.address.number = '654321'
+    // }, 1000)
+
+    // 实现ref
+    const flag = ref(false)
+    /**
+     * flag = {
+     *  _v: false,
+     *  get value() {
+     *    return this._v;
+     *  },
+     *  set value(newVal) {
+     *    this._v = newVal;
+     *  }
+     * }
+     */
     effect(() => {
-      info.textContent = state.address.number
+      info.textContent = flag.value ? 'yes' : 'no'
     })
     setTimeout(() => {
-      state.address.number = '654321'
+      flag.value = true
     }, 1000)
+
+    // 实现toRef
+    // const name = toRef(state, 'name')
+    /**
+     * 当访问name.value的时候，实际访问的是state.name
+     */
+    // console.log(name.value)
+
+    // 实现toRefs
+    const { name, age } = toRefs(state)
+    console.log(name, age)
+
+    // 实现proxyRefs,方便在template模板中直接取值，不用再加上.value
+    const proxy = proxyRefs({ ...toRefs(state), a: 10023 })
+    proxy.age = 1123
+    console.log(proxy.name, proxy.age) // 访问proxy.name --> 实际上访问proxy.name.value
   </script>
 </html>
