@@ -1,3 +1,5 @@
+import { DirtyLevels } from "./constants";
+
 export function effect(fn, options?) {
 
   // 创建响应式effect，数据变动了，则重新执行回调
@@ -49,10 +51,11 @@ export let activeEffect;
 // 全局变量，指向当前正在执行的effect，并导出给baseHandler，
 // 使得当effect的fn执行的时候，baseHandler可以获取到当前正在执行的effect
 // 从而可以把当前正在执行的effect添加到属性的依赖列表中
-class ReactiveEffect {
+export class ReactiveEffect {
   _trackId = 0; // 用于标识当前effect的依赖收集次数，每次依赖收集次数加1
   _running = 0; // 当前effect不在运行,为了解决case6的问题
   _depsLength = 0; // 用于标识当前effect依赖的属性的数量
+  _dirtyLevel = DirtyLevels.Dirty;
   deps = []; // 用于存储当前effect依赖的属性的deps
   public active = true; // 创建的effect默认是响应式的
   // 当fn依赖的数据发生了变化，就需要重新执行run方法
@@ -60,7 +63,16 @@ class ReactiveEffect {
     
   }
 
+  public get dirty() {
+    return this._dirtyLevel === DirtyLevels.Dirty;
+  }
+
+  public set dirty(v) {
+    this._dirtyLevel = v ? DirtyLevels.Dirty : DirtyLevels.NoDirty;
+  }
+
   run() {
+    this._dirtyLevel = DirtyLevels.NoDirty; // 当前effect 每次执行之后，修改_dirtyLevel状态
     if(!this.active) {
       return this.fn(); // 直接执行fn，不进行依赖收集
     }
@@ -158,7 +170,11 @@ export function trackEffect(effect, dep) {
 
 export function triggerEffects(dep) {
   for(const effect of dep.keys()) {
-    if(!effect._running) {
+    // 当前的值为不脏的，但是触发更新需要把值变为脏的
+    if(effect.dirty < DirtyLevels.Dirty) {
+      effect.dirty = DirtyLevels.Dirty;
+    }
+    if(!effect._running && effect.scheduler) { // 如果不是正在执行，才能执行
       effect.scheduler(); // 等价于effect执行run
     }
   }

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>hello vue</h1>
+      <h2 id="info"></h2>
+    </div>
+  </body>
+  <script type="module">
+    /** 
+    // 原生的
+    import {
+      reactive,
+      effect,
+    } from '../node_modules/@vue/reactivity/dist/reactivity.esm-browser.js'
+    */
+
+    import {
+      computed,
+      reactive,
+      effect,
+    } from '../packages/reactivity/dist/reactivity.js'
+
+    const state = reactive({
+      name: 'zhangsan',
+      age: 11,
+      address: {
+        country: '中国',
+        number: '123456',
+      },
+    })
+    /**
+     * computed是一个计算属性，
+     * 得到的结果是一个ref，且不可变
+     */
+
+    // 描述computed的实现原理：
+    // 计算属性computedVal, 依赖了state.name 。。。
+    // 当前属性变化state.name --> 计算属性computed，dirty改为true --> 执行计算属性的effect的scheduler --> 触发计算属性收集的依赖effect，并执行这些effect的scheduler
+
+    // 1. computed也是一个effect， 当依赖的值变化后，触发这个effect函数的重新执行
+    // const computedVal = computed(() => `${state.name}.${state.age + 111}`)
+    const computedVal = computed({
+      get(oldValue) {
+        return `${state.name}.${state.age + 111}.oldValue:${oldValue}`
+      },
+      set(v) {
+        console.log('set', v)
+      },
+    })
+    // 3. 计算属性具备收集能力，也会收集下面的这个effect；属性变化了，effect也会重新执行
+    effect(() => {
+      // 2.维护了一个dirty属性，一开始为true，执行一次后变为false；后续.value访问，就不需要执行computed effect; 如果依赖的值变化了，dirty属性会变为true
+      console.log(computedVal.value)
+      console.log(computedVal.value)
+    })
+
+    setTimeout(() => {
+      state.name = 'lisi'
+    }, 1000)
+  </script>
+</html>

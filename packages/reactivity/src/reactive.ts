@@ -1,5 +1,6 @@
 import { isObject } from "@vue/shared";
-import { ReactiveFlags, handlerOptions } from "./baseHandlers";
+import { handlerOptions } from "./baseHandlers";
+import { ReactiveFlags } from "./constants";
 
 /** 
  * case1: reactiveMap
