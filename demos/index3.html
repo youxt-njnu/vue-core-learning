@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>hello vue</h1>
+      <h2 id="info"></h2>
+    </div>
+  </body>
+  <script type="module">
+    // 原生的
+    // import {
+    //   watch,
+    //   watchEffect,
+    // } from '../node_modules/vue/dist/vue.runtime.esm-browser.js'
+
+    import {
+      reactive,
+      watch,
+      watchEffect,
+    } from '../packages/reactivity/dist/reactivity.js'
+    /**
+     * function watch(source, cb, options?) {}
+     * function watchEffect(source, options?) {}
+     */
+
+    const state = reactive({
+      name: 'aaa',
+      age: 12,
+      address: {
+        country: 'China',
+      },
+    })
+
+    // const state = ref('aaa')
+    // const state1 = () => state.name
+
+    // watch(state, (oldV, newV) => {
+    //   console.log('oldV', oldV)
+    //   console.log('newV', oldV)
+    // })
+
+    // 类似于reactEffect,当内部依赖的响应式数据变化时,会重新执行该函数
+    // 常用来发送请求，如axios.get(/?pageSize={state.pageSize}&pageNum={state.pageNum})
+    watchEffect(() => {
+      console.log('watchEffect', state.name + '---' + state.address.country)
+    })
+
+    setTimeout(() => {
+      state.name = 'bbb'
+      // state.address.country = 'bbb'
+      console.log(state)
+    }, 1000)
+  </script>
+</html>
