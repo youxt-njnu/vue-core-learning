@@ -34,7 +34,8 @@ class RefImpl {
 
 export function trackRefValue(ref) {
   if(activeEffect) {
-    trackEffect(activeEffect,ref.dep = createDep(()=> ref.dep = undefined, 'undefined'));
+    // trackEffect(activeEffect,ref.dep = createDep(()=> ref.dep = undefined, 'undefined')); 这里对ref进行依赖收集，如果之前已经依赖收集过了，ref.dep就有值，当前就不需要进行重新赋值，所以触发了index4.html里的debug case的问题
+    trackEffect(activeEffect,ref.dep || (ref.dep = createDep(()=> ref.dep = undefined, 'undefined')));
   }
 }
 

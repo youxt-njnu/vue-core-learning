@@ -1,0 +1,19 @@
+{
+  "name": "@vue/runtime-dom",
+  "version": "1.0.0",
+  "description": "Vue 3 Runtime DOM Package",
+  "module": "dist/runtime-dom.esm-bundler.js",
+  "unpkg": "dist/runtime-dom.global.js",
+  "buildOptions": {
+    "name": "VueRuntimeDOM",
+    "formats": [
+      "global",
+      "esm-bundler",
+      "esm-browser",
+      "cjs"
+    ]
+  },
+  "dependencies": {
+    "@vue/shared": "workspace:^"
+  }
+}

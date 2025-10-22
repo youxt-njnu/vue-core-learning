@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>hello vue</h1>
+      <h2 id="info"></h2>
+    </div>
+  </body>
+  <script type="module">
+    // 原生的
+    // import {
+    //   ref,
+    //   watch,
+    //   watchEffect,
+    // } from '../node_modules/vue/dist/vue.runtime.esm-browser.js'
+
+    import {
+      ref,
+      watch,
+      watchEffect,
+    } from '../packages/reactivity/dist/reactivity.js'
+
+    const state = ref('aaa')
+
+    const getData = (time) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(time)
+        }, time)
+      })
+    }
+    /**
+     * debug case:异步函数的竞态问题
+     * 如果连续修改state.value,会导致多次发送请求
+     * 输出的结果就表现为：ccc2000, ccc3000
+     * 因为time为2000的后修改，先显示；time为3000的虽然先修改，但后显示
+     */
+    let time = 4000
+    // let queue = [] // 利用闭包
+    watch(state, async (oldV, newV, onCleanUp) => {
+      time -= 1000
+      let flag = true
+      // for (let q of queue) {
+      //   q()
+      // }
+      // queue.push(() => (flag = false))
+      // -----------   可以采用watch的第三个参数，来简化queue的逻辑
+      onCleanUp(() => {
+        flag = false
+      })
+      console.log('before:', state.value + time)
+      let res = await getData(time)
+      if (flag) {
+        document.getElementById('info').innerText = state.value + res
+      }
+    })
+
+    setTimeout(() => {
+      /**
+       * debug case:
+       * state.value的第二次赋值，没有触发依赖收集
+       * 通过
+       * effect(() => {
+       *  console.log(state.value); 看是否数值修改，会触发effect函数； 进一步看依赖收集是否成功
+       * })
+       */
+      state.value = 'bbb'
+      state.value = 'ccc'
+    }, 1000)
+  </script>
+</html>

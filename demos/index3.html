@@ -39,10 +39,17 @@
     // const state = ref('aaa')
     // const state1 = () => state.name
 
-    // watch(state, (oldV, newV) => {
-    //   console.log('oldV', oldV)
-    //   console.log('newV', oldV)
-    // })
+    // watch的返回值是一个函数，可以调用函数，来暂停watch
+    const unwatch = watch(
+      state,
+      (oldV, newV) => {
+        console.log('oldV', oldV)
+        console.log('newV', oldV)
+      },
+      {
+        immediate: true, // 是否立即执行一次回调函数
+      }
+    )
 
     // 类似于reactEffect,当内部依赖的响应式数据变化时,会重新执行该函数
     // 常用来发送请求，如axios.get(/?pageSize={state.pageSize}&pageNum={state.pageNum})
@@ -50,6 +57,7 @@
       console.log('watchEffect', state.name + '---' + state.address.country)
     })
 
+    unwatch()
     setTimeout(() => {
       state.name = 'bbb'
       // state.address.country = 'bbb'

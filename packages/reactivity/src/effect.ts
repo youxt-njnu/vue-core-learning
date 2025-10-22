@@ -118,6 +118,15 @@ export class ReactiveEffect {
        */
     }
   }
+
+  // 提供取消effect的接口
+  stop() {
+    if(this.active) {
+      this.active = false;
+      preCleanEffect(this);
+      postCleanEffect(this);
+    }
+  }
 }
 
 /** 清理依赖

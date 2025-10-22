@@ -49,11 +49,21 @@ function doWatch(source, cb, options) {
     getter = source;
   }
   let oldVal;
+  let cleanFn;
+  const onCleanUp = (fn) => {
+    cleanFn = () => {
+      fn();
+      cleanFn = undefined;
+    }
+  }
   const job = () => {
     if(cb) {
       let newVal = effect.run();
-    cb(oldVal, newVal);
-    oldVal = newVal;
+      if(cleanFn) {
+        cleanFn(); // 在执行cb回调之前，如果之前有执行的没有执行完，先清理
+      }
+      cb(oldVal, newVal,onCleanUp);
+      oldVal = newVal;
     }
     else {
       effect.run(); // watchEffect, 直接执行run即可
@@ -73,5 +83,9 @@ function doWatch(source, cb, options) {
     // watchEffect
     effect.run();
   }
-  return effect;
+
+  const unwatch = () => {
+    effect.stop();
+  }
+  return unwatch;
 }
