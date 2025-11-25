@@ -19,7 +19,7 @@
     "jsx": "preserve", // 保留jsx语法, 交给babel或其他工具处理
     "baseUrl": ".", // 基础路径
     "paths": {
-      "@vue/*": ["packages/*/src"]
+      "@my-vue/*": ["packages/*/src"]
     }
   }
 }

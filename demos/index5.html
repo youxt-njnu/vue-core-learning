@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>{{ message }}</h1>
+    </div>
+
+    <script type="module">
+      import {
+        createRenderer,
+        // render,
+        h,
+      } from '../node_modules/@vue/runtime-dom/dist/runtime-dom.esm-browser.js'
+      import { options } from '../packages/runtime-dom/dist/runtime-dom.js'
+      // runtime-dom 提供操作DOM的api方法 --> runtime-core 与平台无关的核心方法，如h --> reactivity 提供响应式能力
+      /**
+       * createRenderer  可以通过这个自己创建渲染器
+       * render 内置的渲染器，进行dom元素的渲染
+       * h 创建虚拟dom元素
+       */
+      const ele = h(
+        'h1',
+        {
+          class: 'aaa',
+          style: { color: 'red' },
+          onClick() {
+            console.log('click')
+          },
+        },
+        'hello vue'
+      ) // type, propsOrChildren, children
+      // render(ele, app)
+
+      // const renderer = createRenderer({
+      //   createElement(type) {
+      //     return document.createElement(type)
+      //   },
+      //   setElementText(el, text) {
+      //     el.textContent = text
+      //   },
+      //   insert(el, container) {
+      //     container.appendChild(el)
+      //   },
+      // })
+      // 自己写的options进行验证
+      const renderer = createRenderer(options)
+
+      renderer.render(ele, app)
+    </script>
+  </body>
+</html>
